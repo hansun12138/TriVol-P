@@ -1,0 +1,14 @@
+matplotlib==3.11.2
+numpy==2.5.3
+pandas==3.0.6
+pymol==0.1.0
+rdkit==2023.9.2
+scikit_learn==1.9.1
+scipy==1.18.1
+toml==0.10.2
+torch==2.1.0
+torch_geometric==2.8.0.post1
+torchdrug==0.2.1
+tqdm==4.67.3
+umap_learn==0.5.12
+wandb==0.30.0
