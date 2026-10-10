@@ -1,0 +1,153 @@
+[model]
+desc = 'model parameters'
+type = "PROTAC-STAN"
+seed = 111
+
+[model.protac]
+feature = 146
+embed = 64
+hidden = 128
+edge_dim = 3
+seq_hidden = 128
+feature_mode = "pretrained"
+graph_layers = 1
+graph_heads = 4
+
+[model.protac.pretrained_molecule]
+enabled = true
+source = "molformer_or_chemberta_map"
+in_dim = 768
+hidden = 256
+rank = 32
+prompt_enabled = true
+dropout = 0.1
+input_dropout = 0.02
+scale_init = 0.0
+contrastive_enabled = false
+contrastive_weight = 0.003
+contrastive_dropout = 0.2
+contrastive_temperature = 0.2
+
+[model.protac.fragment_attention_bias]
+enabled = false
+num_fragment_types = 4
+unknown_fragment_id = 3
+init = 0.0
+
+[model.protac.fragment_pooling]
+enabled = false
+mode = "residual"
+fragment_ids = [0, 1, 2]
+unknown_fragment_id = 3
+dropout = 0.1
+scale_init = 0.0
+
+[model.protein]
+embed = 1280
+saprot_embed = 1280
+hidden = 128
+saprot_hidden = 128
+out_dim = 64
+
+[model.descriptor]
+in_dim = 8
+hidden = 32
+out_dim = 64
+dropout = 0.1
+
+[model.fusion]
+entity_dim = 128
+relation_dim = 128
+dropout = 0.08
+
+[model.views]
+use_protac_graph = false
+use_descriptors = true
+use_entity_attention = true
+
+[model.interaction]
+heads = 4
+layers = 1
+ff_multiplier = 2
+dropout = 0.08
+
+[model.relation_pooling]
+enabled = false
+num_queries = 1
+heads = 4
+dropout = 0.15
+
+[model.relation_ib]
+enabled = false
+hidden_dim = 128
+dropout = 0.15
+temperature = 1.0
+use_noise = true
+use_gumbel = false
+loss_type = "sparsity"
+beta = 0.001
+
+[model.tan]
+in_dims = [1, 1, 1]
+heads = 2
+
+[model.clf]
+embed = 192
+hidden = 64
+class = 2
+dropout = 0.25
+
+
+[train]
+desc = 'train parameters'
+device = "auto"
+deterministic = true
+deterministic_warn_only = false
+num_workers = 0
+num_threads = 1
+checkpoint_enabled = true
+resume_checkpoint = true
+checkpoint_dir = "saved_models/neww_three"
+learning_rate = 0.00015
+weight_decay = 0.0001
+batch_size = 16
+num_epochs = 400
+train_ratio = 0.8
+use_cv = false
+cv_folds = 5
+
+dataset_root = "data/PROTAC-fine"
+dataset_name = "output"
+split_mode = "degrademaster"
+reference_json_path = "data/PROTAC-fine/name.json"
+split_seed = 111
+shuffle_train = true
+
+accumulation_steps = 1
+tri_weight = 0.4
+tri_temp = 0.07
+tri_anchor = 'protac'
+normalize_descriptors = true
+print_relation_attention = true
+relation_attention_print_samples = 1
+patience = 50
+selection_metric = 'roc_auc'
+selection_tolerance = 0.0
+selection_tie_breakers = []
+
+[train.npp]
+enabled = false
+warmup_epochs = 40
+update_interval = 1
+ema_decay = 0.8
+min_weight = 0.7
+max_weight = 1.0
+confidence_power = 1.0
+gmm_iters = 50
+eps = 0.000001
+
+[tri_weight_sweep]
+# Coarse search including the no-triplet baseline and the current value (0.4).
+# After the coarse search, use --weights to refine the range around the winner.
+weights = [0.4]
+output_dir = "results/tri_weight"
